@@ -46,6 +46,10 @@ namespace ShootingPacman
         TimeSpan fireTime;
         TimeSpan previousFireTime;
 
+        // Explosions
+        Texture2D explosionTexture;
+        List<Animation> explosions;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -78,6 +82,9 @@ namespace ShootingPacman
             // Projectiles
             projectiles = new List<Projectile>();
             fireTime = TimeSpan.FromSeconds(.15f); // Fire every 0.15 second
+
+            // Explosions
+            explosions = new List<Animation>();
 
             base.Initialize();
         }
@@ -112,6 +119,9 @@ namespace ShootingPacman
 
             // Load projectile
             projectileTexture = Content.Load<Texture2D>("laser");
+
+            // Load explosions
+            explosionTexture = Content.Load<Texture2D>("explosion");
         }
 
         /// <summary>
@@ -153,6 +163,9 @@ namespace ShootingPacman
 
             //Update projectiles
             UpdateProjectiles();
+
+            //Update explosions
+            UpdateExplosions(gameTime);
                       
             base.Update(gameTime);
         }
@@ -185,6 +198,10 @@ namespace ShootingPacman
                 enemies[i].Update(gameTime);
                 if (enemies[i].Active == false)
                 {
+                    if (enemies[i].Health <= 0)
+                    {
+                        AddExplosion(enemies[i].Position);
+                    }
                     enemies.RemoveAt(i);
                 }
             }
@@ -296,6 +313,25 @@ namespace ShootingPacman
             }
         }
 
+        private void AddExplosion(Vector2 position)
+        {
+            Animation explosion = new Animation();
+            explosion.Initialize(explosionTexture, position, 134, 134, 12, 45, Color.White, 1f, false);
+            explosions.Add(explosion);
+        }
+
+        private void UpdateExplosions(GameTime gameTime)
+        {
+            for (int i = explosions.Count - 1; i >= 0; i--)
+            {
+                explosions[i].Update(gameTime);
+                if (explosions[i].Active == false)
+                {
+                    explosions.RemoveAt(i);
+                }
+            }
+        }
+
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -320,12 +356,19 @@ namespace ShootingPacman
                 enemies[i].Draw(spriteBatch);
             }
 
+            // Draw projectiles
             for (int i = 0; i < projectiles.Count; i++)
             {
                 projectiles[i].Draw(spriteBatch);
             }
-            // End drawing
-            spriteBatch.End();
+
+            // Draw explosions
+            for (int i = 0; i < explosions.Count; i++ )
+            {
+                explosions[i].Draw(spriteBatch);
+            }
+                // End drawing
+                spriteBatch.End();
 
             base.Draw(gameTime);
         }
