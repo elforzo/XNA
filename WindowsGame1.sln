@@ -5,7 +5,15 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsGame1", "WindowsGame1\WindowsGame1\WindowsGame1.csproj", "{B93B3CE6-EA55-4F54-9819-773880A2A468}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "WindowsGame1Content", "WindowsGame1\WindowsGame1Content\WindowsGame1Content.contentproj", "{DA763D80-CC28-4DD3-9C48-E193D9E401E6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsGame1Content", "WindowsGame1\WindowsGame1Content\WindowsGame1Content.contentproj", "{DA763D80-CC28-4DD3-9C48-E193D9E401E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsGame2", "WindowsGame2\WindowsGame2\WindowsGame2.csproj", "{E4E1C3BD-88B8-4DB9-A2DB-6C1D6FAE7DE4}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "WindowsGame2Content", "WindowsGame2\WindowsGame2Content\WindowsGame2Content.contentproj", "{0CC39C33-0106-4FBE-8F07-F1D718E1B652}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShootingPacman", "ShootingPacman\ShootingPacman\ShootingPacman.csproj", "{68088251-8562-4D33-B3DE-3A3CA011DC27}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "ShootingPacmanContent", "ShootingPacman\ShootingPacmanContent\ShootingPacmanContent.contentproj", "{DED3A852-F7AB-46CA-B2F1-AD0CC56241F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,6 +27,18 @@ Global
 		{B93B3CE6-EA55-4F54-9819-773880A2A468}.Release|x86.Build.0 = Release|x86
 		{DA763D80-CC28-4DD3-9C48-E193D9E401E6}.Debug|x86.ActiveCfg = Debug|x86
 		{DA763D80-CC28-4DD3-9C48-E193D9E401E6}.Release|x86.ActiveCfg = Release|x86
+		{E4E1C3BD-88B8-4DB9-A2DB-6C1D6FAE7DE4}.Debug|x86.ActiveCfg = Debug|x86
+		{E4E1C3BD-88B8-4DB9-A2DB-6C1D6FAE7DE4}.Debug|x86.Build.0 = Debug|x86
+		{E4E1C3BD-88B8-4DB9-A2DB-6C1D6FAE7DE4}.Release|x86.ActiveCfg = Release|x86
+		{E4E1C3BD-88B8-4DB9-A2DB-6C1D6FAE7DE4}.Release|x86.Build.0 = Release|x86
+		{0CC39C33-0106-4FBE-8F07-F1D718E1B652}.Debug|x86.ActiveCfg = Debug|x86
+		{0CC39C33-0106-4FBE-8F07-F1D718E1B652}.Release|x86.ActiveCfg = Release|x86
+		{68088251-8562-4D33-B3DE-3A3CA011DC27}.Debug|x86.ActiveCfg = Debug|x86
+		{68088251-8562-4D33-B3DE-3A3CA011DC27}.Debug|x86.Build.0 = Debug|x86
+		{68088251-8562-4D33-B3DE-3A3CA011DC27}.Release|x86.ActiveCfg = Release|x86
+		{68088251-8562-4D33-B3DE-3A3CA011DC27}.Release|x86.Build.0 = Release|x86
+		{DED3A852-F7AB-46CA-B2F1-AD0CC56241F8}.Debug|x86.ActiveCfg = Debug|x86
+		{DED3A852-F7AB-46CA-B2F1-AD0CC56241F8}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

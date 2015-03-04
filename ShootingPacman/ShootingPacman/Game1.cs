@@ -9,7 +9,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 
-namespace WindowsGame2_particles
+
+namespace ShootingPacman
 {
     /// <summary>
     /// This is the main type for your game
@@ -18,12 +19,18 @@ namespace WindowsGame2_particles
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        ParticleEngine particleEngine;
+        Player player;
+
+        KeyboardState currentKeyboardState;
+        KeyboardState previousKeyboardState;
+
+        float playerMoveSpeed;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            this.IsMouseVisible = true;
         }
 
         /// <summary>
@@ -35,7 +42,8 @@ namespace WindowsGame2_particles
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            player = new Player();
+            playerMoveSpeed = 8.0f;
             base.Initialize();
         }
 
@@ -48,13 +56,16 @@ namespace WindowsGame2_particles
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
-            List<Texture2D> textures = new List<Texture2D>();
-           // textures.Add(Content.Load<Texture2D>("circle"));
-            //textures.Add(Content.Load<Texture2D>("diamond"));
-            //textures.Add(Content.Load<Texture2D>("star"));
-            textures.Add(Content.Load<Texture2D>("pacman"));
-            particleEngine = new ParticleEngine(textures, new Vector2(400, 240));
+            // Load player resources
+            Animation playerAnimation = new Animation();
+            Texture2D playerTexture = Content.Load<Texture2D>("shipAnimation");
+            playerAnimation.Initialize(playerTexture, Vector2.Zero, 115, 69, 8, 30, Color.White, 1f, true);
+
+            Vector2 playerPosition = new
+            Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y
+            + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+
+            player.Initialize(playerAnimation, playerPosition);
         }
 
         /// <summary>
@@ -77,11 +88,46 @@ namespace WindowsGame2_particles
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            // TODO: Add your update logic here
-            particleEngine.EmitterLocation = new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
-            particleEngine.Update();
+            // Save keyboardstate, read keyboardstate
+            previousKeyboardState = currentKeyboardState;
+            currentKeyboardState = Keyboard.GetState();
+            // Update player
+            UpdatePlayer(gameTime);
+
+            
+
+            
 
             base.Update(gameTime);
+        }
+
+        private void UpdatePlayer(GameTime gameTime)
+        {
+            player.Update(gameTime);
+            //Keyboard controls
+            if(currentKeyboardState.IsKeyDown(Keys.Left))
+            {
+                player.Position.X -= playerMoveSpeed;
+            }
+            if(currentKeyboardState.IsKeyDown(Keys.Right))
+            {
+                player.Position.X += playerMoveSpeed;
+            }
+            if(currentKeyboardState.IsKeyDown(Keys.Up))
+            {
+                player.Position.Y -= playerMoveSpeed;
+            }
+            if(currentKeyboardState.IsKeyDown(Keys.Down))
+            {
+                player.Position.Y += playerMoveSpeed;
+            }
+
+            // Check out of bounds
+            player.Position.X = MathHelper.Clamp(player.Position.X,
+                player.Width/2, GraphicsDevice.Viewport.Width - player.Width/2);
+            player.Position.Y = MathHelper.Clamp(player.Position.Y,
+                player.Height/2, GraphicsDevice.Viewport.Height - player.Height/2);
+
         }
 
         /// <summary>
@@ -90,11 +136,12 @@ namespace WindowsGame2_particles
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
-            particleEngine.Draw(spriteBatch);
-
+            spriteBatch.Begin();
+            player.Draw(spriteBatch);
+            spriteBatch.End();
             base.Draw(gameTime);
         }
     }
