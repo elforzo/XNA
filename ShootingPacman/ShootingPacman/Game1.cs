@@ -31,6 +31,15 @@ namespace ShootingPacman
         ParallaxingBackground bgLayer1;
         ParallaxingBackground bgLayer2;
 
+        // Enemies
+        Texture2D enemyTexture;
+        List<Enemy> enemies;
+        // Rate for enemies appearing
+        TimeSpan enemySpawnTime;
+        TimeSpan previousSpawnTime;
+
+        Random random;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -46,12 +55,19 @@ namespace ShootingPacman
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            // Player
             player = new Player();
             playerMoveSpeed = 8.0f;
 
+            // BG
             bgLayer1 = new ParallaxingBackground();
             bgLayer2 = new ParallaxingBackground();
+
+            //Enemies
+            enemies = new List<Enemy>();
+            previousSpawnTime = TimeSpan.Zero;
+            enemySpawnTime = TimeSpan.FromSeconds(1.5f);
+            random = new Random();
 
             base.Initialize();
         }
@@ -80,6 +96,9 @@ namespace ShootingPacman
             bgLayer1.Initialize(Content, "bgLayer1", GraphicsDevice.Viewport.Width, -1);
             bgLayer2.Initialize(Content, "bgLayer2", GraphicsDevice.Viewport.Width, -2);
             mainBackground = Content.Load<Texture2D>("mainbackground");
+
+            // Load enemies
+            enemyTexture = Content.Load<Texture2D>("mineAnimation");
         }
 
         /// <summary>
@@ -112,8 +131,45 @@ namespace ShootingPacman
             // Update parallax BG
             bgLayer1.Update();
             bgLayer2.Update();    
+
+            // Update enemies
+            UpdateEnemies(gameTime);
                       
             base.Update(gameTime);
+        }
+
+        private void AddEnemy()
+        {
+            // Create and initialize animation object
+            Animation enemyAnimation = new Animation();
+            enemyAnimation.Initialize(enemyTexture, Vector2.Zero, 47, 61, 8, 30, Color.White, 1f, true);
+            // Generate random position
+            Vector2 position = new Vector2(GraphicsDevice.Viewport.Width + enemyTexture.Width / 2,
+                random.Next(100, GraphicsDevice.Viewport.Height - 100));
+            // Create and initialize enemy and add it to list of enemies
+            Enemy enemy = new Enemy();
+            enemy.Initialize(enemyAnimation, position);
+            enemies.Add(enemy);
+        }
+
+        private void UpdateEnemies(GameTime gameTime)
+        {
+            // Spawn new enemy every 1.5 seconds
+            if (gameTime.TotalGameTime - previousSpawnTime > enemySpawnTime)
+            {
+                previousSpawnTime = gameTime.TotalGameTime;
+                AddEnemy();
+            }
+            //Update enemies
+            for (int i = enemies.Count - 1; i >= 0; i--)
+            {
+                enemies[i].Update(gameTime);
+                if (enemies[i].Active == false)
+                {
+                    enemies.RemoveAt(i);
+                }
+            }
+
         }
 
         private void UpdatePlayer(GameTime gameTime)
@@ -163,8 +219,14 @@ namespace ShootingPacman
             // Draw player            
             player.Draw(spriteBatch);
 
-            // End drawing
-            spriteBatch.End();
+            // Draw enemies
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                enemies[i].Draw(spriteBatch);
+            }
+
+                // End drawing
+                spriteBatch.End();
 
             base.Draw(gameTime);
         }
