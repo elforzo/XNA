@@ -134,6 +134,9 @@ namespace ShootingPacman
 
             // Update enemies
             UpdateEnemies(gameTime);
+
+            // Update collision check
+            UpdateCollision();
                       
             base.Update(gameTime);
         }
@@ -169,7 +172,6 @@ namespace ShootingPacman
                     enemies.RemoveAt(i);
                 }
             }
-
         }
 
         private void UpdatePlayer(GameTime gameTime)
@@ -198,8 +200,36 @@ namespace ShootingPacman
                 player.Width/2, GraphicsDevice.Viewport.Width - player.Width/2);
             player.Position.Y = MathHelper.Clamp(player.Position.Y,
                 player.Height/2, GraphicsDevice.Viewport.Height - player.Height/2);
-
         }
+
+        private void UpdateCollision()
+        {
+            // Use Rectangles built-in intersect to determine overlapping objects
+            Rectangle rectangle1;
+            Rectangle rectangle2;
+            // Create once for player
+            rectangle1 = new Rectangle((int)player.Position.X-20, (int)player.Position.Y,
+                player.Width, player.Height);
+
+            // Detect collision between player and enemies
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                rectangle2 = new Rectangle((int)enemies[i].Position.X, (int)enemies[i].Position.Y,
+                    enemies[i].Width-30, enemies[i].Height-15);
+                // Determine if collision occurs
+                if (rectangle1.Intersects(rectangle2))
+                {
+                    // Subtract health from player
+                    player.Health -= enemies[i].Damage;
+                    // Destroy enemy
+                    enemies[i].Health = 0;
+                    // Check to see if player died
+                    if (player.Health <= 0)
+                        player.Active = false;
+                }
+            }
+        }
+
 
         /// <summary>
         /// This is called when the game should draw itself.

@@ -10,7 +10,7 @@ namespace ShootingPacman
     class Enemy
     {
         public Animation EnemyAnimation;
-        public Vector2 Posistion;
+        public Vector2 Position;
         public bool Active;
         public int Health;
         public int Damage;
@@ -28,7 +28,7 @@ namespace ShootingPacman
         public void Initialize(Animation animation, Vector2 position)
         {
             EnemyAnimation = animation;
-            Posistion = position;
+            Position = position;
             Active = true;
             Health = 10;
             Damage = 10;
@@ -39,12 +39,12 @@ namespace ShootingPacman
         public void Update(GameTime gameTime)
         { 
             // Enemy moves left => - to x-pos
-            Posistion.X -= enemyMovespeed;
-            EnemyAnimation.Position = Posistion;
+            Position.X -= enemyMovespeed;
+            EnemyAnimation.Position = Position;
             EnemyAnimation.Update(gameTime);
 
             // Remove if dead or out of screen
-            if (Posistion.X < -Width || Health <= 0)
+            if (Position.X < -Width || Health <= 0)
             {
                 Active = false;
             }
