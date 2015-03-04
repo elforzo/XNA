@@ -37,8 +37,14 @@ namespace ShootingPacman
         // Rate for enemies appearing
         TimeSpan enemySpawnTime;
         TimeSpan previousSpawnTime;
-
         Random random;
+
+        // Projectiles
+        Texture2D projectileTexture;
+        List<Projectile> projectiles;
+        // Rate of fire of player laser
+        TimeSpan fireTime;
+        TimeSpan previousFireTime;
 
         public Game1()
         {
@@ -66,8 +72,12 @@ namespace ShootingPacman
             //Enemies
             enemies = new List<Enemy>();
             previousSpawnTime = TimeSpan.Zero;
-            enemySpawnTime = TimeSpan.FromSeconds(1.5f);
+            enemySpawnTime = TimeSpan.FromSeconds(1.5f); // Spawn enemy every 1.5 second
             random = new Random();
+
+            // Projectiles
+            projectiles = new List<Projectile>();
+            fireTime = TimeSpan.FromSeconds(.15f); // Fire every 0.15 second
 
             base.Initialize();
         }
@@ -99,6 +109,9 @@ namespace ShootingPacman
 
             // Load enemies
             enemyTexture = Content.Load<Texture2D>("mineAnimation");
+
+            // Load projectile
+            projectileTexture = Content.Load<Texture2D>("laser");
         }
 
         /// <summary>
@@ -137,6 +150,9 @@ namespace ShootingPacman
 
             // Update collision check
             UpdateCollision();
+
+            //Update projectiles
+            UpdateProjectiles();
                       
             base.Update(gameTime);
         }
@@ -200,6 +216,13 @@ namespace ShootingPacman
                 player.Width/2, GraphicsDevice.Viewport.Width - player.Width/2);
             player.Position.Y = MathHelper.Clamp(player.Position.Y,
                 player.Height/2, GraphicsDevice.Viewport.Height - player.Height/2);
+
+            // Fire gun at set interval
+            if (gameTime.TotalGameTime - previousFireTime > fireTime)
+            {
+                previousFireTime = gameTime.TotalGameTime;
+                AddProjectile(player.Position + new Vector2(player.Width / 2, 0));
+            }
         }
 
         private void UpdateCollision()
@@ -228,8 +251,50 @@ namespace ShootingPacman
                         player.Active = false;
                 }
             }
+
+            // Projectile vs enemy collision check
+            for (int i = 0; i < projectiles.Count; i++)
+            {
+                for (int j = 0; j < enemies.Count; j++)
+                {
+                    // Create rectangles
+                    rectangle1 = new Rectangle((int)projectiles[i].Position.X - projectiles[i].Width / 2,
+                        (int)projectiles[i].Position.Y - projectiles[i].Height / 2,
+                        projectiles[i].Width, projectiles[i].Height);
+
+                    rectangle2 = new Rectangle((int)enemies[j].Position.X - enemies[j].Width / 2,
+                        (int)enemies[j].Position.Y - enemies[j].Height / 2,
+                        enemies[j].Width, enemies[j].Height);
+                    // check for intersection of rectangles
+                    if (rectangle1.Intersects(rectangle2))
+                    {
+                        enemies[j].Health -= projectiles[i].Damage;
+                        projectiles[i].Active = false;
+                    }
+                }
+            }
         }
 
+        private void AddProjectile(Vector2 position)
+        {
+            Projectile projectile = new Projectile();
+            projectile.Initilize(GraphicsDevice.Viewport, projectileTexture, position);
+            projectiles.Add(projectile);
+        }
+
+        private void UpdateProjectiles()
+        {
+            // Update the projectiles
+            for (int i = projectiles.Count - 1; i >= 0; i--)
+            {
+                projectiles[i].Update();
+
+                if (projectiles[i].Active == false)
+                {
+                    projectiles.RemoveAt(i);
+                }
+            }
+        }
 
         /// <summary>
         /// This is called when the game should draw itself.
@@ -255,8 +320,12 @@ namespace ShootingPacman
                 enemies[i].Draw(spriteBatch);
             }
 
-                // End drawing
-                spriteBatch.End();
+            for (int i = 0; i < projectiles.Count; i++)
+            {
+                projectiles[i].Draw(spriteBatch);
+            }
+            // End drawing
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
