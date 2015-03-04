@@ -25,6 +25,11 @@ namespace ShootingPacman
         KeyboardState previousKeyboardState;
 
         float playerMoveSpeed;
+        // Image for static BG
+        Texture2D mainBackground;
+        //Parallaxing Layers
+        ParallaxingBackground bgLayer1;
+        ParallaxingBackground bgLayer2;
 
         public Game1()
         {
@@ -44,6 +49,10 @@ namespace ShootingPacman
             // TODO: Add your initialization logic here
             player = new Player();
             playerMoveSpeed = 8.0f;
+
+            bgLayer1 = new ParallaxingBackground();
+            bgLayer2 = new ParallaxingBackground();
+
             base.Initialize();
         }
 
@@ -66,6 +75,11 @@ namespace ShootingPacman
             + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
 
             player.Initialize(playerAnimation, playerPosition);
+
+            //Load background
+            bgLayer1.Initialize(Content, "bgLayer1", GraphicsDevice.Viewport.Width, -1);
+            bgLayer2.Initialize(Content, "bgLayer2", GraphicsDevice.Viewport.Width, -2);
+            mainBackground = Content.Load<Texture2D>("mainbackground");
         }
 
         /// <summary>
@@ -91,13 +105,14 @@ namespace ShootingPacman
             // Save keyboardstate, read keyboardstate
             previousKeyboardState = currentKeyboardState;
             currentKeyboardState = Keyboard.GetState();
+
             // Update player
             UpdatePlayer(gameTime);
 
-            
-
-            
-
+            // Update parallax BG
+            bgLayer1.Update();
+            bgLayer2.Update();    
+                      
             base.Update(gameTime);
         }
 
@@ -137,11 +152,20 @@ namespace ShootingPacman
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            // TODO: Add your drawing code here
+            // Start drawing
             spriteBatch.Begin();
+
+            // Draw BG
+            spriteBatch.Draw(mainBackground, Vector2.Zero, Color.White);
+            bgLayer1.Draw(spriteBatch);
+            bgLayer2.Draw(spriteBatch);
+
+            // Draw player            
             player.Draw(spriteBatch);
+
+            // End drawing
             spriteBatch.End();
+
             base.Draw(gameTime);
         }
     }
